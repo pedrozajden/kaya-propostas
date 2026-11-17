@@ -85,6 +85,8 @@
     }
     $(".vagas-txt", el).textContent = txtVagas(tipo);
   });
+  var resumoCel = $("[data-vagas-resumo-cel]");
+  if (resumoCel) resumoCel.textContent = txtVagas("plano") + (resta.plano > 0 ? " no plano" : "");
   var resumo = $("[data-vagas-resumo]");
   if (resumo) {
     resumo.textContent = resta.plano === 0 ? "Vagas do plano esgotadas" : resta.plano === 1 ? "Última vaga no plano" : resta.plano === TOT.plano ? resta.plano + " vagas no plano" : "Restam " + resta.plano + " vagas no plano";
@@ -109,6 +111,11 @@
 
   /* ---------------------------------- prazo ---------------------------------- */
   var fim = new Date("2026-11-30T23:59:59-03:00");
+  var curto = $("[data-dias-curto]");
+  if (curto) {
+    var falta = Math.ceil((fim - new Date()) / 864e5);
+    curto.textContent = falta <= 0 ? "encerrada" : falta === 1 ? "último dia" : "faltam " + falta + " dias";
+  }
   var elDias = $("[data-dias]");
   if (elDias) {
     var ms = fim - new Date();
@@ -310,6 +317,7 @@
       scrollTrigger: {
         trigger: sec, start: "top top", end: function () { return "+=" + Math.round(innerHeight * 1.1 * N); },
         pin: true, scrub: 0.6, anticipatePin: 1,
+        onToggle: function (st) { doc.classList.toggle("fixando", st.isActive); },
         onUpdate: function (st) { marca(Math.min(N - 1, Math.floor(st.progress * N * 0.999))); },
         onLeaveBack: function () { marca(0); },
       },
@@ -350,17 +358,26 @@
           .from($$(".ms-bals .aviso", sec), { y: 20, scale: 0.8, autoAlpha: 0, stagger: 0.25, duration: 0.35, ease: "back.out(2)" }, at + 1.1);
       },
       4: function (t, at) {
-        var crm = $(".crm", sec), novo = $(".crm-novo", sec), vagas = $$(".cc-vaga", sec), notif = $(".notif-crm", sec);
+        // a conversa chega no WhatsApp, vira cartão e anda no CRM até a venda
+        var crm = $(".crm", sec), novo = $(".crm-novo", sec), vagas = $$(".cc-vaga", sec);
+        var zap = $(".zap", sec), zbs = $$(".zb", sec), base = $$(".crm-tit, .crm-cols", sec);
+        gsap.set(zap, { xPercent: -50, yPercent: -50 });
         var desloca = function (k) { return function () { return vagas[k].offsetLeft - vagas[0].offsetLeft; }; };
+        var alvoX = function () { return vagas[0].offsetLeft + vagas[0].offsetWidth / 2 - zap.offsetLeft; };
+        var alvoY = function () { return vagas[0].offsetTop + vagas[0].offsetHeight / 2 - zap.offsetTop; };
         t.from(crm, { y: 40, duration: 0.5 }, at)
-          .from(notif, { y: -30, autoAlpha: 0, duration: 0.35, ease: "back.out(2)" }, at + 0.15)
-          .fromTo(novo, { y: -50, scale: 0.85, autoAlpha: 0 }, { y: 0, scale: 1, autoAlpha: 1, duration: 0.35, ease: "back.out(1.8)" }, at + 0.45)
-          .to(notif, { autoAlpha: 0, y: -10, duration: 0.25 }, at + 0.7)
-          .to(novo, { x: desloca(1), duration: 0.45, ease: "power2.inOut" }, at + 0.8)
-          .to(novo, { x: desloca(2), duration: 0.45, ease: "power2.inOut" }, at + 1.35)
-          .to($(".n1", novo), { autoAlpha: 0, duration: 0.1 }, at + 1.7)
-          .fromTo($$(".n2, .ic", novo), { autoAlpha: 0, scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 0.3, ease: "back.out(3)" }, at + 1.75)
-          .to(novo, { borderColor: "#FF7557", backgroundColor: "#FFF3EF", duration: 0.3 }, at + 1.75);
+          .fromTo(base, { autoAlpha: 0.25 }, { autoAlpha: 0.25, duration: 0.01 }, at)
+          .from(zap, { y: 40, scale: 0.9, autoAlpha: 0, duration: 0.4, ease: "back.out(1.6)" }, at + 0.05)
+          .from(zbs[0], { y: 14, scale: 0.85, autoAlpha: 0, duration: 0.3, ease: "back.out(2)" }, at + 0.3)
+          .from(zbs[1], { y: 14, scale: 0.85, autoAlpha: 0, duration: 0.3, ease: "back.out(2)" }, at + 0.55)
+          .to(zap, { x: alvoX, y: alvoY, scale: 0.2, autoAlpha: 0, duration: 0.45, ease: "power2.in" }, at + 0.95)
+          .to(base, { autoAlpha: 1, duration: 0.35 }, at + 0.95)
+          .fromTo(novo, { scale: 0.6, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.3, ease: "back.out(2)" }, at + 1.3)
+          .to(novo, { x: desloca(1), duration: 0.4, ease: "power2.inOut" }, at + 1.6)
+          .to(novo, { x: desloca(2), duration: 0.4, ease: "power2.inOut" }, at + 2.0)
+          .to($(".n1", novo), { autoAlpha: 0, duration: 0.1 }, at + 2.35)
+          .fromTo($$(".n2, .ic", novo), { autoAlpha: 0, scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 0.25, ease: "back.out(3)" }, at + 2.38)
+          .to(novo, { borderColor: "#FF7557", backgroundColor: "#FFF3EF", duration: 0.25 }, at + 2.38);
       },
       5: function (t, at) {
         t.from($$(".rel2", sec), { y: 40, duration: 0.5 }, at)
@@ -379,7 +396,7 @@
       tl.to(pares[i - 1], { autoAlpha: 0, y: -30, duration: 0.45, ease: "power2.in" }, t)
         .fromTo(pares[i], { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, duration: 0.5 }, t + 0.35);
       if (entra[i]) entra[i](tl, t + 0.4);
-      t += 2.6;
+      t += i === 4 ? 3.3 : 2.6; // o CRM tem mais etapas
     }
     tl.to({}, { duration: 0.6 });
     marca(0);
@@ -409,6 +426,7 @@
       defaults: { ease: "power2.out" },
       scrollTrigger: {
         trigger: ".anc", start: "top top", end: "+=2300", pin: true, scrub: 0.6, anticipatePin: 1,
+        onToggle: function (st) { doc.classList.toggle("fixando", st.isActive); },
         onUpdate: function (st) { marcaPasso(st.progress < 0.2 ? 0 : st.progress < 0.55 ? 1 : 2); },
       },
     });
