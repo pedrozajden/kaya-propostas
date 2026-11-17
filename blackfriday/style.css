@@ -969,10 +969,10 @@ html.anim .desce{margin-bottom:12px}
 /* Extremo Black em destaque */
 .extremo{margin-top:18px;max-width:none;display:grid;gap:6px;padding:24px 26px;border-radius:22px;background:var(--noite) linear-gradient(120deg,#0B2648,#123F75);color:#fff;position:relative;overflow:hidden}
 .extremo::after{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(closest-side,rgba(255,117,87,.35),transparent)}
-.ex-selo{justify-self:start;font-weight:800;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:#fff;background:var(--acento);border-radius:999px;padding:5px 12px}
-.ex-nome{font-size:clamp(1.6rem,3.4vw,2.2rem);font-weight:800;letter-spacing:-.03em;line-height:1.1;margin-top:6px}
+.ex-nome{font-size:clamp(1.6rem,3.4vw,2.2rem);font-weight:800;letter-spacing:-.03em;line-height:1.1}
 .ex-txt{color:#C9D6E8;max-width:62ch;position:relative;z-index:1}
-@media (min-width:860px){.extremo{grid-template-columns:auto 1fr;column-gap:32px;align-items:center}.ex-selo{grid-column:1}.ex-nome{grid-column:1;margin:0}.ex-txt{grid-column:2;grid-row:1/3}}
+.ex-txt strong{color:#fff;font-weight:800}
+@media (min-width:860px){.extremo{grid-template-columns:auto 1fr;column-gap:32px;align-items:center}.ex-nome{margin:0}}
 
 /* CRM: a conversa chega antes */
 .zap{position:absolute;left:50%;top:50%;z-index:6;width:min(84%,290px);border-radius:22px;background:#EAF1F8;overflow:hidden;box-shadow:0 30px 60px -16px rgba(0,0,0,.7)}
