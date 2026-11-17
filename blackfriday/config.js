@@ -19,13 +19,15 @@ window.KAYA = {
   /* Números do Do Jardim: só aparecem no ar com a autorização deles. */
   doJardimAutorizado: true, // autorizado pelo Pedro em 16/11/2026
 
-  /* Vídeos gravados pelo Pedro (verticais, .mp4 leve, dentro da pasta video/).
-     Exemplo: { arquivo: "/blackfriday/video/do-jardim.mp4", capa: "/blackfriday/video/do-jardim.jpg", legenda: "Do Jardim · anúncio" } */
+  /* Vídeos gravados pelo Pedro (verticais, dentro da pasta video/).
+     "previa" é um trecho curto e leve, sem som, que toca sozinho na página.
+     O "arquivo" completo só carrega quando a pessoa toca para ouvir.
+     Exemplo: { arquivo: "/blackfriday/video/do-jardim.mp4", previa: "/blackfriday/video/do-jardim-previa.mp4", capa: "/blackfriday/video/do-jardim.jpg", legenda: "Do Jardim · anúncio" } */
   videos: [
-    { arquivo: "/blackfriday/video/dojardim.mp4", capa: "/blackfriday/video/dojardim.jpg", legenda: "Do Jardim · anúncio" },
-    { arquivo: "/blackfriday/video/magna-rosa.mp4", capa: "/blackfriday/video/magna-rosa.jpg", legenda: "Magna Mater · entrevista" },
-    { arquivo: "/blackfriday/video/miguel-arcanjo.mp4", capa: "/blackfriday/video/miguel-arcanjo.jpg", legenda: "Escola Miguel Arcanjo · anúncio" },
-    { arquivo: "/blackfriday/video/magna-teatree.mp4", capa: "/blackfriday/video/magna-teatree.jpg", legenda: "Magna Mater · produto" },
-    { arquivo: "/blackfriday/video/carolina-colours.mp4", capa: "/blackfriday/video/carolina-colours.jpg", legenda: "Carolina Colours · institucional" },
+    { arquivo: "/blackfriday/video/dojardim.mp4", previa: "/blackfriday/video/dojardim-previa.mp4", capa: "/blackfriday/video/dojardim.jpg", legenda: "Do Jardim · anúncio" },
+    { arquivo: "/blackfriday/video/magna-rosa.mp4", previa: "/blackfriday/video/magna-rosa-previa.mp4", capa: "/blackfriday/video/magna-rosa.jpg", legenda: "Magna Mater · entrevista" },
+    { arquivo: "/blackfriday/video/miguel-arcanjo.mp4", previa: "/blackfriday/video/miguel-arcanjo-previa.mp4", capa: "/blackfriday/video/miguel-arcanjo.jpg", legenda: "Escola Miguel Arcanjo · anúncio" },
+    { arquivo: "/blackfriday/video/magna-teatree.mp4", previa: "/blackfriday/video/magna-teatree-previa.mp4", capa: "/blackfriday/video/magna-teatree.jpg", legenda: "Magna Mater · produto" },
+    { arquivo: "/blackfriday/video/carolina-colours.mp4", previa: "/blackfriday/video/carolina-colours-previa.mp4", capa: "/blackfriday/video/carolina-colours.jpg", legenda: "Carolina Colours · institucional" },
   ],
 };

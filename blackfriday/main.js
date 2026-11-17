@@ -33,7 +33,7 @@
       f.className = "tela";
       f.style.setProperty("--at", Math.min(i, 5) * 0.1 + "s");
       var vid = document.createElement("video");
-      vid.src = v.arquivo; vid.muted = true; vid.loop = true; vid.playsInline = true; vid.preload = "none";
+      vid.src = v.previa || v.arquivo; vid.muted = true; vid.loop = true; vid.playsInline = true; vid.preload = "none";
       vid.setAttribute("playsinline", "");
       if (v.capa) vid.poster = v.capa;
       f.appendChild(vid);
@@ -43,6 +43,10 @@
         var ligar = vid.muted;
         $$("video", fita).forEach(function (o) { o.muted = true; });
         $$(".som", fita).forEach(function (b) { b.textContent = "🔇 tocar com som"; });
+        if (ligar && v.previa && vid.getAttribute("data-completo") !== "1") {
+          vid.setAttribute("data-completo", "1");
+          vid.src = v.arquivo; vid.preload = "auto";
+        }
         vid.muted = !ligar;
         if (ligar) { vid.currentTime = 0; vid.play().catch(function () {}); som.textContent = "🔊 som ligado"; }
       });
@@ -83,10 +87,25 @@
   });
   var resumo = $("[data-vagas-resumo]");
   if (resumo) {
-    var p = resta.plano === 0 ? "Plano esgotado" : resta.plano === 1 ? "1 vaga no plano" : resta.plano + " vagas no plano";
-    var s = resta.sites === 0 ? "sites esgotados" : resta.sites === 1 ? "1 site" : resta.sites + " sites";
-    resumo.textContent = p + " · " + s;
+    resumo.textContent = resta.plano === 0 ? "Vagas do plano esgotadas" : resta.plano === 1 ? "Última vaga no plano" : resta.plano === TOT.plano ? resta.plano + " vagas no plano" : "Restam " + resta.plano + " vagas no plano";
   }
+
+  /* ------------------------------ sinais da dor ------------------------------ */
+  (function () {
+    var sinais = $$(".sinal"), conta = $("[data-dor-conta]");
+    if (!sinais.length) return;
+    sinais.forEach(function (b) {
+      b.setAttribute("aria-pressed", "false");
+      b.addEventListener("click", function () {
+        var on = b.getAttribute("aria-pressed") !== "true";
+        b.setAttribute("aria-pressed", on ? "true" : "false");
+        var n = $$('.sinal[aria-pressed="true"]').length;
+        if (!conta) return;
+        conta.hidden = n === 0;
+        conta.textContent = n === 1 ? "Você marcou 1 sinal." : "Você marcou " + n + " sinais.";
+      });
+    });
+  })();
 
   /* ---------------------------------- prazo ---------------------------------- */
   var fim = new Date("2026-11-30T23:59:59-03:00");
@@ -284,9 +303,7 @@
         else video.pause();
       }
     }
-    var linha = $(".graf-linha", sec), L = 600;
     gsap.set(pares.slice(1), { autoAlpha: 0 });
-    gsap.set(linha, { strokeDasharray: L, strokeDashoffset: L });
 
     var tl = gsap.timeline({
       defaults: { ease: "power2.out" },
@@ -306,7 +323,8 @@
       },
       1: function (t, at) {
         t.from($$(".visor", sec), { scale: 0.82, rotate: -4, duration: 0.6 }, at)
-          .from($$(".canto", sec), { scale: 1.8, autoAlpha: 0, stagger: 0.05, duration: 0.4 }, at + 0.2);
+          .from($$(".canto", sec), { scale: 1.8, autoAlpha: 0, stagger: 0.05, duration: 0.4 }, at + 0.2)
+          .from($$(".banco span", sec), { x: 30, autoAlpha: 0, stagger: 0.18, duration: 0.4, ease: "back.out(2)" }, at + 0.5);
       },
       2: function (t, at) {
         // o feed corre e para com o anúncio no meio da cena
@@ -320,7 +338,8 @@
         };
         t.fromTo(feed, { y: function () { return fim() + 300; } }, { y: fim, duration: 1.1, ease: "power2.out" }, at)
           .from($$(".fp-ad", sec), { scale: 0.9, duration: 0.5, ease: "back.out(1.6)" }, at + 0.55)
-          .from($$(".fp-acoes .cor", sec), { scale: 0, transformOrigin: "50% 50%", duration: 0.3, ease: "back.out(3)" }, at + 0.95);
+          .from($$(".fp-acoes .cor", sec), { scale: 0, transformOrigin: "50% 50%", duration: 0.3, ease: "back.out(3)" }, at + 0.95)
+          .from($$(".fp-tag", sec), { y: 16, scale: 0.8, autoAlpha: 0, duration: 0.4, ease: "back.out(2.4)" }, at + 1.1);
       },
       3: function (t, at) {
         t.from($$(".ms", sec), { y: 40, rotate: 2, duration: 0.5 }, at)
@@ -328,26 +347,25 @@
           .from($$(".mp", sec), { y: 18, autoAlpha: 0, stagger: 0.08, duration: 0.35 }, at + 0.35)
           .fromTo($$(".ms-cursor", sec), { left: "88%", top: "96%", autoAlpha: 0 }, { left: "30%", top: "50%", autoAlpha: 1, duration: 0.45, ease: "power2.inOut" }, at + 0.5)
           .to($$(".ms-btn", sec), { scale: 0.92, duration: 0.1, yoyo: true, repeat: 1 }, at + 0.95)
-          .from($$(".ms-fab", sec), { scale: 0, duration: 0.3, ease: "back.out(3)" }, at + 1.0)
-          .from($$(".ms-bals .bal", sec), { y: 20, scale: 0.8, autoAlpha: 0, stagger: 0.2, duration: 0.3, ease: "back.out(2)" }, at + 1.1);
+          .from($$(".ms-bals .aviso", sec), { y: 20, scale: 0.8, autoAlpha: 0, stagger: 0.25, duration: 0.35, ease: "back.out(2)" }, at + 1.1);
       },
       4: function (t, at) {
-        var b = $$(".fone-chat .bal", sec), dig = $(".digitando", sec);
-        t.from($$(".fone", sec), { y: 40, duration: 0.5 }, at)
-          .from(b[0], { y: 16, scale: 0.85, autoAlpha: 0, duration: 0.3, ease: "back.out(2)" }, at + 0.15)
-          .fromTo(dig, { autoAlpha: 0, height: 0, marginTop: -8 }, { autoAlpha: 1, height: "auto", marginTop: 0, duration: 0.2 }, at + 0.35)
-          .from($$(".dica", sec), { x: -30, autoAlpha: 0, duration: 0.35, ease: "back.out(2)" }, at + 0.4)
-          .to(dig, { autoAlpha: 0, height: 0, marginTop: -8, duration: 0.15 }, at + 0.6)
-          .from(b[1], { y: 16, scale: 0.85, autoAlpha: 0, duration: 0.3, ease: "back.out(2)" }, at + 0.65)
-          .from(b[2], { y: 16, scale: 0.85, autoAlpha: 0, duration: 0.3, ease: "back.out(2)" }, at + 0.85)
-          .from($$(".pedido", sec), { y: 16, scale: 0.9, autoAlpha: 0, duration: 0.35, ease: "back.out(2)" }, at + 1.05)
-          .from($$(".venda", sec), { scale: 0.4, autoAlpha: 0, duration: 0.4, ease: "back.out(3)" }, at + 1.25);
+        var crm = $(".crm", sec), novo = $(".crm-novo", sec), vagas = $$(".cc-vaga", sec), notif = $(".notif-crm", sec);
+        var desloca = function (k) { return function () { return vagas[k].offsetLeft - vagas[0].offsetLeft; }; };
+        t.from(crm, { y: 40, duration: 0.5 }, at)
+          .from(notif, { y: -30, autoAlpha: 0, duration: 0.35, ease: "back.out(2)" }, at + 0.15)
+          .fromTo(novo, { y: -50, scale: 0.85, autoAlpha: 0 }, { y: 0, scale: 1, autoAlpha: 1, duration: 0.35, ease: "back.out(1.8)" }, at + 0.45)
+          .to(notif, { autoAlpha: 0, y: -10, duration: 0.25 }, at + 0.7)
+          .to(novo, { x: desloca(1), duration: 0.45, ease: "power2.inOut" }, at + 0.8)
+          .to(novo, { x: desloca(2), duration: 0.45, ease: "power2.inOut" }, at + 1.35)
+          .to($(".n1", novo), { autoAlpha: 0, duration: 0.1 }, at + 1.7)
+          .fromTo($$(".n2, .ic", novo), { autoAlpha: 0, scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 0.3, ease: "back.out(3)" }, at + 1.75)
+          .to(novo, { borderColor: "#FF7557", backgroundColor: "#FFF3EF", duration: 0.3 }, at + 1.75);
       },
       5: function (t, at) {
-        t.from($$(".rel", sec), { y: 40, duration: 0.5 }, at)
-          .to(linha, { strokeDashoffset: 0, duration: 0.9, ease: "power1.inOut" }, at + 0.2)
-          .from($$(".graf-area", sec), { autoAlpha: 0, duration: 0.6 }, at + 0.6)
-          .from($$(".rel-lin i", sec), { scaleX: 0, transformOrigin: "left", stagger: 0.12, duration: 0.5 }, at + 0.5);
+        t.from($$(".rel2", sec), { y: 40, duration: 0.5 }, at)
+          .from($$(".rel-itens li", sec), { x: -24, autoAlpha: 0, stagger: 0.2, duration: 0.4 }, at + 0.25)
+          .from($$(".reuniao", sec), { y: 24, scale: 0.85, autoAlpha: 0, duration: 0.4, ease: "back.out(2)" }, at + 0.95);
       },
     };
     // a primeira peça entra sozinha quando a seção chega na tela
@@ -382,14 +400,22 @@
     gsap.set(".anc-num", { color: "#ffffff" });
     gsap.set(".anc-mes", { autoAlpha: 0, x: -10 });
     gsap.set(".anc-luz", { scale: 0.85, opacity: 0.6 });
+    gsap.set(".dt-b", { autoAlpha: 0, y: 12 });
+    var passos = $$(".anc-passos li");
+    var marcaPasso = function (k) { passos.forEach(function (p, i) { p.classList.toggle("on", i === k); p.classList.toggle("foi", i < k); }); };
     pinta();
 
     var tl = gsap.timeline({
       defaults: { ease: "power2.out" },
-      scrollTrigger: { trigger: ".anc", start: "top top", end: "+=2300", pin: true, scrub: 0.6, anticipatePin: 1 },
+      scrollTrigger: {
+        trigger: ".anc", start: "top top", end: "+=2300", pin: true, scrub: 0.6, anticipatePin: 1,
+        onUpdate: function (st) { marcaPasso(st.progress < 0.2 ? 0 : st.progress < 0.55 ? 1 : 2); },
+      },
     });
     tl.to({}, { duration: 0.35 });
     tl.addLabel("plano")
+      .to(".dt-a", { autoAlpha: 0, y: -12, duration: 0.3 }, "plano+=0.2")
+      .to(".dt-b", { autoAlpha: 1, y: 0, duration: 0.4 }, "plano+=1.2")
       .to(".nota", { autoAlpha: 0, y: -24, duration: 0.45 }, "plano")
       .to(".k-a,.s-a", { autoAlpha: 0, y: -14, duration: 0.35 }, "plano")
       .to(".degraus", { autoAlpha: 1, duration: 0.2 }, "plano+=0.3")
@@ -401,6 +427,7 @@
       .to(".d2", { autoAlpha: 1, scaleX: 1, duration: 0.6 }, "plano+=1.1")
       .to({}, { duration: 0.5 });
     tl.addLabel("black")
+      .to(".desce", { autoAlpha: 0, x: 20, duration: 0.35 }, "black")
       .to(".k-b,.s-b", { autoAlpha: 0, y: -14, duration: 0.35 }, "black")
       .to(".k-c,.s-c", { autoAlpha: 1, y: 0, duration: 0.45 }, "black+=0.25")
       .to(v, { n: 875, duration: 1.1, ease: "power2.inOut", onUpdate: pinta }, "black+=0.35")
