@@ -128,9 +128,9 @@
 
   /* --------------------------------- WhatsApp --------------------------------- */
   var MSG = {
-    geral: "Oi, Pedro! Vi a página da Black Kayá e quero garantir minha vaga.",
-    plano: "Oi, Pedro! Vi a página da Black Kayá e quero saber do Plano Crescer.",
-    site: "Oi, Pedro! Vi a página da Black Kayá e quero meu site.",
+    geral: "Oi, Pedro! Vi a página da Black Kayá e quero saber mais. Quero colocar o marketing do meu negócio em ordem.",
+    plano: "Oi, Pedro! Vi a página da Black Kayá e quero entender melhor o Plano Crescer.",
+    site: "Oi, Pedro! Vi a página da Black Kayá e quero saber mais sobre o site.",
     duvida: "Oi, Pedro! Vi a página da Black Kayá e fiquei com uma dúvida.",
   };
   $$("[data-wa]").forEach(function (a) {
