@@ -28,7 +28,11 @@
   (function () {
     var sec = $("[data-videos]"), fita = $("[data-fita]");
     if (!sec) return;
-    var lista = K.videos || [];
+    var lista = (K.videos || []).slice();
+    // a página pode pedir um vídeo na frente (ex.: clínicas abre com a entrevista)
+    if (P.primeiroVideo) lista.sort(function (a, b) {
+      return (b.arquivo.indexOf(P.primeiroVideo) > -1) - (a.arquivo.indexOf(P.primeiroVideo) > -1);
+    });
     if (!lista.length) { sec.remove(); return; }
     lista.forEach(function (v, i) {
       var f = document.createElement("figure");
