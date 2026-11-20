@@ -12,6 +12,8 @@ Endereços:
 |---|---|
 | `index.html` | Página neutra da raiz de proposta.kayamarketing.com.br |
 | `blackfriday/` | Página de vendas Black Kayá 2026 (até 30/11/2026) |
+| `servicos/` | Versão da Black para prestadores de serviço (kayamarketing.com.br/servicos). Usa CSS, imagens e `config.js` de `blackfriday/` |
+| `clinicas/` | Versão da Black para clínicas (kayamarketing.com.br/clinicas). Usa o `main.js` de `servicos/` |
 | `guara-mirim/` | Proposta Jardim Guará Mirim (página + PDF) |
 | `miguel-arcanjo/` | Proposta Escola Miguel Arcanjo (página + PDF) |
 | `vercel.json` | URLs limpas, redirecionamentos do domínio e `noindex` em tudo |
